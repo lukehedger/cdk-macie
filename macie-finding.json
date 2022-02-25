@@ -1,0 +1,143 @@
+{
+  "version": "0",
+  "id": "14ddd0b1-7c90-b9e3-8a68-6a408a6d13d2",
+  "detail-type": "Macie Finding",
+  "source": "aws.macie",
+  "account": "123456789012",
+  "time": "2020-01-06T08:51:29Z",
+  "region": "us-west-2",
+  "resources": [],
+  "detail": {
+    "schemaVersion": "1.0",
+    "id": "4ed45d06-c9b9-4506-ab7f-18a573a71596",
+    "accountId": "123456789012",
+    "partition": "aws",
+    "region": "us-west-2",
+    "type": "SensitiveData:S3Object/Multiple",
+    "title": "MockedTitle",
+    "description": "Mocked description, needs change in the future.",
+    "severity": {
+      "score": 2,
+      "description": "Low"
+    },
+    "createdAt": "2020-01-06T08:51:29.547Z",
+    "updatedAt": "2020-01-06T08:51:29.547Z",
+    "count": 1,
+    "resourcesAffected": {
+      "s3Bucket": {
+        "arn": "arn:aws:s3:::macie-sample-finding-us-west-2",
+        "name": "macie-sample-finding-us-west-2",
+        "createdAt": "2019-04-03T20:46:56.000Z",
+        "owner": {
+          "displayName": "MacieSampleFindingOwner",
+          "id": "7009a8971cd538e11f6b6606438875e7c86c5b672f46db45460ddcd087d36c32"
+        },
+        "tags": [
+          {
+            "key": "8efe9af5-d0b2-424f-86c8-d404e946ff58",
+            "value": "82fe6761-2ef1-45f7-9eb9-201dd5c8c065"
+          }
+        ],
+        "defaultServerSideEncryption": {
+          "encryptionType": "AES256",
+          "kmsMasterKeyId": "arn:aws:kms:us-west-2:123456789012:key/4dff8393-e225-4793-a9a0-608ec069e5a7"
+        },
+        "publicAccess": {
+          "permissionConfiguration": {
+            "bucketLevelPermissions": {
+              "accessControlList": {
+                "allowsPublicReadAccess": true,
+                "allowsPublicWriteAccess": false
+              },
+              "bucketPolicy": {
+                "allowsPublicReadAccess": false,
+                "allowsPublicWriteAccess": false
+              },
+              "blockPublicAccess": {
+                "ignorePublicAcls": false,
+                "restrictPublicBuckets": false,
+                "blockPublicAcls": false,
+                "blockPublicPolicy": false
+              }
+            },
+            "accountLevelPermissions": {
+              "blockPublicAccess": {
+                "ignorePublicAcls": false,
+                "restrictPublicBuckets": false,
+                "blockPublicAcls": false,
+                "blockPublicPolicy": false
+              }
+            }
+          },
+          "effectivePermission": "NOT_PUBLIC"
+        }
+      },
+      "s3Object": {
+        "bucketArn": "arn:aws:s3:::macie-sample-finding-us-west-2",
+        "key": "b5ccfaf3-12a5-4d48-84ee-955329b9dc72",
+        "path": "sample/a/b/myCoolObject.zip",
+        "extension": "zip",
+        "lastModified": "2019-10-15T19:02:48.457Z",
+        "versionId": "ws31OurgOOjH_HHllIxPE35P.MELYaYh",
+        "serverSideEncryption": {
+          "encryptionType": "NONE",
+          "kmsMasterKeyId": "arn:aws:kms:us-west-2:123456789012:key/4dff8393-e225-4793-a9a0-608ec069e5a7"
+        },
+        "size": 38929,
+        "storageClass": "STANDARD",
+        "tags": [
+          {
+            "key": "5835b3aa-abb9-4e7c-b6f8-644a41b61f03",
+            "value": "41b0285b-d94d-48bc-9afd-e84b9fdaa43a"
+          }
+        ],
+        "publicAccess": false,
+        "etag": "\"34e627d340013689eff80f7faaa14a5b-4\""
+      }
+    },
+    "category": "CLASSIFICATION",
+    "classificationDetails": {
+      "jobArn": "arnOfJobThatGeneratedThisFinding",
+      "jobId": "5355",
+      "result": {
+        "status": {
+          "code": "SUCCESS",
+          "reason": "test"
+        },
+        "sizeClassified": 38929,
+        "mimeType": "text/plain",
+        "sensitiveData": [
+          {
+            "category": "CREDENTIALS",
+            "totalCount": 36246,
+            "detections": [
+              {
+                "type": "AWS_CREDENTIALS",
+                "count": 22678
+              },
+              {
+                "type": "SSH_KEY",
+                "count": 13568
+              }
+            ]
+          }
+        ],
+        "customDataIdentifiers": {
+          "totalCount": 27598,
+          "detections": [
+            {
+              "arn": "arn::aws::macie::cdis/5faf98ec-aa18-41ad-9149-46de349c76aa",
+              "name": "5faf98ec-aa18-41ad-9149-46de349c76aa",
+              "count": 6283
+            }
+          ]
+        }
+      },
+      "detailedResultsLocation": "arn:aws:s3:::output-bucket-name/path/to/export/result.zip"
+    },
+    "policyDetails": null,
+    "sample": false,
+    "archived": false,
+    "internalInfo": null
+  }
+}
