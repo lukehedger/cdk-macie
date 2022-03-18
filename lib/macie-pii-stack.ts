@@ -239,9 +239,15 @@ export class MaciePiiStack extends Stack {
         },
         physicalResourceId: PhysicalResourceId.fromResponse("jobId"),
       },
-      policy: AwsCustomResourcePolicy.fromSdkCalls({
-        resources: AwsCustomResourcePolicy.ANY_RESOURCE,
-      }),
+      policy: {
+        statements: [
+          new PolicyStatement({
+            actions: ["macie2:CreateClassificationJob"],
+            effect: Effect.ALLOW,
+            resources: ["arn:aws:macie2:*:*:classification-job/*"],
+          }),
+        ],
+      },
     });
 
     const secret = new Secret(this, `Macie-Teams-Secret-${STAGE}`, {
