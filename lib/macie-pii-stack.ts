@@ -9,7 +9,6 @@ import {
   ApiDestination,
   Authorization,
   Connection,
-  EventBus,
   EventField,
   Rule,
   RuleTargetInput,
@@ -21,6 +20,7 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { FilterPattern, SubscriptionFilter } from "aws-cdk-lib/aws-logs";
 import { KinesisDestination } from "aws-cdk-lib/aws-logs-destinations";
 import {
+  ArnPrincipal,
   Effect,
   PolicyDocument,
   PolicyStatement,
@@ -65,9 +65,22 @@ export class MaciePiiStack extends Stack {
       description: "Encryption key for Kinesis delivery stream S3 destination",
     });
 
-    const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}`, {
+    // Allow Macie to use customer managed KMS key https://docs.aws.amazon.com/macie/latest/user/discovery-supported-encryption-types.html
+    encryptionKey.addToResourcePolicy(
+      new PolicyStatement({
+        actions: ["kms:Decrypt"],
+        principals: [
+          new ArnPrincipal(
+            `arn:aws:iam::${this.account}:role/aws-service-role/macie.amazonaws.com/AWSServiceRoleForAmazonMacie`
+          ),
+        ],
+        resources: ["*"],
+      })
+    );
+
+    const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}-2`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      bucketName: `macie-teams-bucket-${STAGE}`,
+      bucketName: `macie-teams-bucket-${STAGE}-2`,
       encryption: BucketEncryption.KMS,
       encryptionKey: encryptionKey,
       // intelligentTieringConfigurations: [],
@@ -202,10 +215,10 @@ export class MaciePiiStack extends Stack {
         action: "createClassificationJob",
         parameters: {
           description: "Detect sensitive data in Lambda function logs",
-          initialRun: true,
+          initialRun: false,
           jobType: "SCHEDULED",
           managedDataIdentifierSelector: "ALL",
-          name: `Logs-PII-${STAGE}`,
+          name: `Function-Logs-PII-${STAGE}`,
           s3JobDefinition: {
             bucketDefinitions: [
               {
@@ -236,6 +249,7 @@ export class MaciePiiStack extends Stack {
         "fake-teams-user",
         SecretValue.secretsManager(secret.secretName)
       ),
+      connectionName: `Macie-Teams-Connection-${STAGE}`,
       description:
         "Connection with fake basic username/password auth. Teams does not require auth for webhook POST requests",
     });
@@ -244,23 +258,21 @@ export class MaciePiiStack extends Stack {
       this,
       `Macie-Teams-Destination-${STAGE}`,
       {
-        connection,
-        endpoint: TEAMS_WEBHOOK_URL,
+        apiDestinationName: `Macie-Teams-Destination-${STAGE}`,
+        connection: connection,
         description:
           "Calling MS Teams webhook with Basic username/password auth",
+        endpoint: TEAMS_WEBHOOK_URL,
       }
     );
 
-    const eventBus = new EventBus(this, `Macie-Teams-EventBus-${STAGE}`, {
-      eventBusName: "macie-teams-alerts",
-    });
-
-    new Rule(this, "Macie-Teams-Rule", {
-      eventBus: eventBus,
+    // Rule on default event bus. Macie sends events to default bus
+    new Rule(this, `Macie-Teams-Rule-${STAGE}`, {
       eventPattern: {
         detailType: ["Macie Finding"],
         source: ["aws.macie"],
       },
+      ruleName: `Macie-Teams-Rule-${STAGE}`,
       targets: [
         new ApiDestinationTarget(destination, {
           // See: https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using
