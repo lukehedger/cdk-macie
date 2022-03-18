@@ -2,6 +2,10 @@
 
 Deploy Amazon Macie infrastructure with AWS CDK
 
+## Architecture
+
+![PII Detection](https://user-images.githubusercontent.com/1913316/159051507-507b5bb7-b264-4cfd-88c1-064609a64c49.jpeg)
+
 ## Deploy
 
 ```
