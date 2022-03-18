@@ -337,9 +337,13 @@ export class MaciePiiStack extends Stack {
                 targets: [
                   {
                     os: "default",
-                    uri: `https://eu-central-1.console.aws.amazon.com/macie/home?region=eu-central-1#jobs?itemId=${EventField.fromPath(
+                    uri: `https://${
+                      this.region
+                    }.console.aws.amazon.com/macie/home?region=${
+                      this.region
+                    }#findings?tab=job&search=classificationDetails.jobId%3D${EventField.fromPath(
                       "$.detail.classificationDetails.jobId"
-                    )}`,
+                    )}&macros=current`,
                   },
                 ],
               },
