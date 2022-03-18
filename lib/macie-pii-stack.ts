@@ -192,8 +192,8 @@ export class MaciePiiStack extends Stack {
               awskmsKeyArn: encryptionKey.keyArn,
             },
           },
-          // compressionFormat: "GZIP",
-          // prefix: "logs",
+          // https://docs.aws.amazon.com/macie/latest/user/discovery-supported-formats.html
+          compressionFormat: "GZIP",
           roleArn: deliveryStreamRole.roleArn,
         },
       }
