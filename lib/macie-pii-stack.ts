@@ -79,9 +79,9 @@ export class MaciePiiStack extends Stack {
       })
     );
 
-    const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}-2`, {
+    const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}-3`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      bucketName: `macie-teams-bucket-${STAGE}-2`,
+      bucketName: `macie-teams-bucket-${STAGE}-3`,
       encryption: BucketEncryption.KMS,
       encryptionKey: encryptionKey,
       // intelligentTieringConfigurations: [],
