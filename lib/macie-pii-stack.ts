@@ -36,6 +36,7 @@ import {
 } from "aws-cdk-lib/aws-s3";
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Key } from "aws-cdk-lib/aws-kms";
+import { nanoid } from "nanoid";
 
 export class MaciePiiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -209,11 +210,16 @@ export class MaciePiiStack extends Stack {
       status: "ENABLED",
     });
 
+    // Unique token to ensure the idempotency of Macie /jobs request
+    const clientToken = nanoid(10);
+
+    // See https://docs.aws.amazon.com/macie/latest/APIReference/jobs.html
     new AwsCustomResource(this, `Macie-Teams-Job-${STAGE}`, {
       onCreate: {
         service: "Macie2",
         action: "createClassificationJob",
         parameters: {
+          clientToken: clientToken,
           description: "Detect sensitive data in Lambda function logs",
           initialRun: false,
           jobType: "SCHEDULED",
