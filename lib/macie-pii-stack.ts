@@ -1,4 +1,10 @@
-import { RemovalPolicy, SecretValue, Stack, StackProps } from "aws-cdk-lib";
+import {
+  Duration,
+  RemovalPolicy,
+  SecretValue,
+  Stack,
+  StackProps,
+} from "aws-cdk-lib";
 import { Construct } from "constructs";
 import {
   AwsCustomResource,
@@ -79,12 +85,21 @@ export class MaciePiiStack extends Stack {
       })
     );
 
+    const s3ObjectPrefix = "fn-logs";
+
     const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}-3`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       bucketName: `macie-teams-bucket-${STAGE}-3`,
       encryption: BucketEncryption.KMS,
       encryptionKey: encryptionKey,
-      // intelligentTieringConfigurations: [],
+      intelligentTieringConfigurations: [
+        {
+          archiveAccessTierTime: Duration.days(90),
+          deepArchiveAccessTierTime: Duration.days(180),
+          name: `Macie-Teams-Bucket-Tiering-${STAGE}-3`,
+          prefix: s3ObjectPrefix,
+        },
+      ],
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
@@ -194,6 +209,7 @@ export class MaciePiiStack extends Stack {
           },
           // https://docs.aws.amazon.com/macie/latest/user/discovery-supported-formats.html
           compressionFormat: "GZIP",
+          prefix: s3ObjectPrefix,
           roleArn: deliveryStreamRole.roleArn,
         },
       }
