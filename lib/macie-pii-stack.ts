@@ -309,9 +309,7 @@ export class MaciePiiStack extends Stack {
             "@type": "MessageCard",
             "@context": "http://schema.org/extensions",
             summary: "Macie Finding",
-            text: `Macie Finding for job ${EventField.fromPath(
-              "$.detail.classificationDetails.jobId"
-            )}`,
+            text: `Macie has detected potentially sensitive data in CloudWatch Logs`,
             title: `Macie Finding for job ${EventField.fromPath(
               "$.detail.classificationDetails.jobId"
             )}`,
@@ -324,6 +322,14 @@ export class MaciePiiStack extends Stack {
                     value: EventField.fromPath(
                       "$.detail.classificationDetails.jobId"
                     ),
+                  },
+                  {
+                    name: "Severity",
+                    value: EventField.fromPath("$.detail.severity.description"), // Example: Low
+                  },
+                  {
+                    name: "Type",
+                    value: EventField.fromPath("$.detail.type"), // Example: SensitiveData:S3Object/Multiple
                   },
                 ],
                 markdown: true,
