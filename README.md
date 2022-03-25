@@ -20,5 +20,6 @@ aws lambda invoke --function-name SensitiveData-{STAGE} response.json
 
 ## TODO
 
+- [ ] Use distinct KMS customer managed keys across services (S3, Kinesis)
 - [ ] Publish Macie Sensitive Data Findings to Security Hub https://docs.aws.amazon.com/macie/latest/APIReference/findings-publication-configuration.html
 - [ ] Configure S3 bucket for long-term results storage https://docs.aws.amazon.com/macie/latest/APIReference/classification-export-configuration.html
