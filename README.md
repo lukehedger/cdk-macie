@@ -22,4 +22,8 @@ aws lambda invoke --function-name SensitiveData-{STAGE} response.json
 
 - [ ] Use distinct KMS customer managed keys across services (S3, Kinesis)
 - [ ] Publish Macie Sensitive Data Findings to Security Hub https://docs.aws.amazon.com/macie/latest/APIReference/findings-publication-configuration.html
-- [ ] Configure S3 bucket for long-term results storage https://docs.aws.amazon.com/macie/latest/APIReference/classification-export-configuration.html
+- [ ] Configure S3 bucket for long-term results storage, with Intelligent Tiering https://docs.aws.amazon.com/macie/latest/APIReference/classification-export-configuration.html
+- [ ] Configure lifecycle policy on logs S3 bucket to expire objects after X days https://docs.aws.amazon.com/AmazonS3/latest/userguide/how-to-set-lifecycle-configuration-intro.html
+- [ ] Add SQS dead-letter queue to EventBridge API Destination target
+- [ ] Add CloudWatch log alarm for errors https://aws.amazon.com/about-aws/whats-new/2021/04/amazon-macie-adds-cloudwatch-logging-for-job-status-and-health-monitoring-of-sensitive-data-discovery-jobs/, https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html
+- [ ] Add CloudTrail API logging
