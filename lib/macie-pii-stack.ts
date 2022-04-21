@@ -85,7 +85,7 @@ export class MaciePiiStack extends Stack {
       })
     );
 
-    const s3ObjectPrefix = "fn-logs";
+    const s3ObjectPrefix = "fn-logs-";
 
     const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}-3`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
