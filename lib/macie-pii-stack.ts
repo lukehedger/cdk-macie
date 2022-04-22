@@ -33,15 +33,16 @@ import {
   Role,
   ServicePrincipal,
 } from "aws-cdk-lib/aws-iam";
-import { CfnSession } from "aws-cdk-lib/aws-macie";
+import { Key } from "aws-cdk-lib/aws-kms";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { CfnSession } from "aws-cdk-lib/aws-macie";
 import {
   BlockPublicAccess,
   Bucket,
   BucketEncryption,
 } from "aws-cdk-lib/aws-s3";
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
-import { Key } from "aws-cdk-lib/aws-kms";
+import { Queue } from "aws-cdk-lib/aws-sqs";
 import { nanoid } from "nanoid";
 
 export class MaciePiiStack extends Stack {
@@ -311,6 +312,14 @@ export class MaciePiiStack extends Stack {
       }
     );
 
+    const teamsDestinationDLQ = new Queue(
+      this,
+      `Macie-Teams-Destination-DLQ-${STAGE}`,
+      {
+        queueName: `Macie-Teams-Destination-DLQ-${STAGE}`,
+      }
+    );
+
     // Rule on default event bus. Macie sends events to default bus
     new Rule(this, `Macie-Teams-Rule-${STAGE}`, {
       eventPattern: {
@@ -320,7 +329,7 @@ export class MaciePiiStack extends Stack {
       ruleName: `Macie-Teams-Rule-${STAGE}`,
       targets: [
         new ApiDestinationTarget(destination, {
-          // deadLetterQueue: ,
+          deadLetterQueue: teamsDestinationDLQ,
           // See: https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using
           // See: https://docs.aws.amazon.com/macie/latest/user/findings-publish-event-schemas.html)
           event: RuleTargetInput.fromObject({
