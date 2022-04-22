@@ -87,25 +87,37 @@ export class MaciePiiStack extends Stack {
 
     const s3ObjectPrefix = "fn-logs-";
 
-    const bucket = new Bucket(this, `Macie-Teams-Bucket-${STAGE}-3`, {
+    const cloudwatchLogsBucket = new Bucket(
+      this,
+      `Macie-Logs-Bucket-${STAGE}`,
+      {
+        blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+        bucketName: `macie-logs-bucket-${STAGE}`,
+        encryption: BucketEncryption.KMS,
+        encryptionKey: encryptionKey,
+        lifecycleRules: [
+          {
+            expiration: Duration.days(7),
+          },
+        ],
+        removalPolicy: RemovalPolicy.DESTROY,
+      }
+    );
+
+    new Bucket(this, `Macie-Archive-Bucket-${STAGE}`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      bucketName: `macie-teams-bucket-${STAGE}-3`,
+      bucketName: `macie-archive-bucket-${STAGE}`,
       encryption: BucketEncryption.KMS,
       encryptionKey: encryptionKey,
-      lifecycleRules: [
-        {
-          expiration: Duration.days(7),
-        },
-      ],
       intelligentTieringConfigurations: [
         {
-          archiveAccessTierTime: Duration.days(90),
-          deepArchiveAccessTierTime: Duration.days(180),
-          name: `Macie-Teams-Bucket-Tiering-${STAGE}-3`,
+          archiveAccessTierTime: Duration.days(30),
+          deepArchiveAccessTierTime: Duration.days(90),
+          name: `Macie-Archive-Bucket-Tiering-${STAGE}`,
           prefix: s3ObjectPrefix,
         },
       ],
-      removalPolicy: RemovalPolicy.DESTROY,
+      removalPolicy: RemovalPolicy.RETAIN,
     });
 
     const stream = new Stream(this, `Macie-Teams-Stream-${STAGE}`, {
@@ -166,8 +178,8 @@ export class MaciePiiStack extends Stack {
                 ],
                 effect: Effect.ALLOW,
                 resources: [
-                  bucket.bucketArn, // arn:aws:s3:::bucket-name
-                  bucket.arnForObjects("*"), // arn:aws:s3:::bucket-name/*
+                  cloudwatchLogsBucket.bucketArn, // arn:aws:s3:::bucket-name
+                  cloudwatchLogsBucket.arnForObjects("*"), // arn:aws:s3:::bucket-name/*
                 ],
               }),
               new PolicyStatement({
@@ -178,8 +190,8 @@ export class MaciePiiStack extends Stack {
                   },
                   StringLike: {
                     "kms:EncryptionContext:aws:s3:arn": [
-                      bucket.bucketArn, // arn:aws:s3:::bucket-name
-                      bucket.arnForObjects("*"), // arn:aws:s3:::bucket-name/*
+                      cloudwatchLogsBucket.bucketArn, // arn:aws:s3:::bucket-name
+                      cloudwatchLogsBucket.arnForObjects("*"), // arn:aws:s3:::bucket-name/*
                     ],
                   },
                 },
@@ -206,7 +218,7 @@ export class MaciePiiStack extends Stack {
           roleArn: deliveryStreamRole.roleArn,
         },
         s3DestinationConfiguration: {
-          bucketArn: bucket.bucketArn,
+          bucketArn: cloudwatchLogsBucket.bucketArn,
           encryptionConfiguration: {
             kmsEncryptionConfig: {
               awskmsKeyArn: encryptionKey.keyArn,
@@ -250,7 +262,7 @@ export class MaciePiiStack extends Stack {
             bucketDefinitions: [
               {
                 accountId: this.account,
-                buckets: [bucket.bucketName],
+                buckets: [cloudwatchLogsBucket.bucketName],
               },
             ],
           },
@@ -308,6 +320,7 @@ export class MaciePiiStack extends Stack {
       ruleName: `Macie-Teams-Rule-${STAGE}`,
       targets: [
         new ApiDestinationTarget(destination, {
+          // deadLetterQueue: ,
           // See: https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using
           // See: https://docs.aws.amazon.com/macie/latest/user/findings-publish-event-schemas.html)
           event: RuleTargetInput.fromObject({
