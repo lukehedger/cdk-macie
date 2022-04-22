@@ -92,6 +92,11 @@ export class MaciePiiStack extends Stack {
       bucketName: `macie-teams-bucket-${STAGE}-3`,
       encryption: BucketEncryption.KMS,
       encryptionKey: encryptionKey,
+      lifecycleRules: [
+        {
+          expiration: Duration.days(7),
+        },
+      ],
       intelligentTieringConfigurations: [
         {
           archiveAccessTierTime: Duration.days(90),
