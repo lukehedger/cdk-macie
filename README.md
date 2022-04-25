@@ -22,6 +22,6 @@ aws lambda invoke --function-name SensitiveData-{STAGE} response.json
 
 - [ ] Use distinct KMS customer managed keys across services (S3, Kinesis)
 - [ ] Configure S3 bucket for long-term results storage, with Intelligent Tiering https://docs.aws.amazon.com/macie/latest/APIReference/classification-export-configuration.html
-- [ ] Publish Macie Sensitive Data Findings to Security Hub https://docs.aws.amazon.com/macie/latest/APIReference/findings-publication-configuration.html
 - [ ] Add CloudWatch log alarm for errors https://aws.amazon.com/about-aws/whats-new/2021/04/amazon-macie-adds-cloudwatch-logging-for-job-status-and-health-monitoring-of-sensitive-data-discovery-jobs/, https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html
-- [ ] Add CloudTrail API logging
+- [ ] Publish Macie Sensitive Data Findings to Security Hub https://docs.aws.amazon.com/macie/latest/APIReference/findings-publication-configuration.html
+- [ ] Add auto-remediation (via Teams message button click and Step Functions workflow) to delete log stream from CloudWatch and clean up S3 object
