@@ -1,10 +1,15 @@
 # cdk-macie
 
-Deploy Amazon Macie infrastructure with AWS CDK
+Deploy an Amazon Macie sensitive data detection pipeline with AWS CDK.
+
+- Detect sensitive data in Lambda function logs
+- Monitor pipeline health via CloudWatch alarms
+- Secured with data encryption at rest and in transit
+- Costs optimised to the max
 
 ## Architecture
 
-![PII Detection](https://user-images.githubusercontent.com/1913316/159051507-507b5bb7-b264-4cfd-88c1-064609a64c49.jpeg)
+![PII Detection](https://user-images.githubusercontent.com/1913316/165085863-b9a3ab9d-6599-444a-b8dd-f1e4eea16fd6.jpeg)
 
 ## Deploy
 
@@ -17,6 +22,10 @@ STAGE=xxx TEAMS_WEBHOOK_URL=xxx npx cdk deploy
 ```
 aws lambda invoke --function-name SensitiveData-{STAGE} response.json
 ```
+
+## Resources
+
+- [Talk: Sensitive Data Detection Pipelines](https://slides.com/lh4/sensitive-data-detection-pipelines-06fc75)
 
 ## TODO
 
